@@ -12,7 +12,7 @@
 
 ### Play with code
 
-- step 1: ingest prefixes
+- step 1: ingest prefixes (or use postman with ingest bulk prefix data present at path resources/data/prefix-data.txt)
   ```base
   $ curl -X POST "http://localhost:8080/api/truecaller/index" -H "accept: */*" -H "Content-Type: text/plain" 
   -d '2y3fKTS
