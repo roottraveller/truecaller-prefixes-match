@@ -55,6 +55,18 @@ class PrefixesMatchApplicationTests {
     }
 
     @Test
+    void shouldReturnLongestPrefixWhenSubMatching() throws Exception {
+        String sampleStr = "truecallertruecallertruecaller";
+        mockMvc.perform(get("/api/truecaller/search/{input}", sampleStr)
+//                        .contentType("text/plain")
+                        .param("partial", "false"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.prefix", is("truecaller")))
+                .andExpect(jsonPath("$.matched", is("FULL")));
+
+    }
+
+    @Test
     void shouldReturnEmptyPrefixWhenNotExactMatching() throws Exception {
         String sampleStr = "atruecaller";
         mockMvc.perform(get("/api/truecaller/search/{input}", sampleStr)
@@ -67,7 +79,7 @@ class PrefixesMatchApplicationTests {
     }
 
     @Test
-    void shouldReturnEmptyPrefixWhenPartialMatchingDisabled() throws Exception {
+    void shouldReturnEmptyPrefixWhenPartialMatchingDisabled1() throws Exception {
         String sampleStr = "trueca";
         mockMvc.perform(get("/api/truecaller/search/{input}", sampleStr)
                         .param("partial", "false"))
@@ -78,12 +90,34 @@ class PrefixesMatchApplicationTests {
     }
 
     @Test
-    void shouldReturnLongestPrefixWhenPartialMatchingEnabled() throws Exception {
+    void shouldReturnEmptyPrefixWhenPartialMatchingDisabled2() throws Exception {
+        String sampleStr = "truecatruecallertruecaller";
+        mockMvc.perform(get("/api/truecaller/search/{input}", sampleStr)
+                        .param("partial", "false"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.prefix", is("")))
+                .andExpect(jsonPath("$.matched", is("NONE")));
+
+    }
+
+    @Test
+    void shouldReturnLongestPrefixWhenPartialMatchingEnabled1() throws Exception {
         String sampleStr = "trueca";
         mockMvc.perform(get("/api/truecaller/search/{input}", sampleStr)
                         .param("partial", "true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.prefix", is(sampleStr)))
+                .andExpect(jsonPath("$.matched", is("PARTIAL")));
+
+    }
+
+    @Test
+    void shouldReturnLongestPrefixWhenPartialMatchingEnabled2() throws Exception {
+        String sampleStr = "truecatruecallertruecaller";
+        mockMvc.perform(get("/api/truecaller/search/{input}", sampleStr)
+                        .param("partial", "true"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.prefix", is("trueca")))
                 .andExpect(jsonPath("$.matched", is("PARTIAL")));
 
     }
