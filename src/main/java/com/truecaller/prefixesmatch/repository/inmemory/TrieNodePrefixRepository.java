@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Repository
-public class TrieNodeRepository {
+public class TrieNodePrefixRepository implements PrefixRepository{
     private TrieNode root;
 
-    public boolean insert(String str) {
+    public boolean insertPrefix(String str) {
         if (root == null) {
             root = getNewTrieNode();
         }
@@ -30,7 +30,7 @@ public class TrieNodeRepository {
             }
             trieNode = trieNode.getChildren().get(ch);
         }
-        // set isEndOfWord=true
+        // set isEndOfWord=true for each word
         trieNode.setEndOfWord(true);
         return true;
     }
@@ -45,7 +45,7 @@ public class TrieNodeRepository {
         }
 
         int prefixMatchEndIdx = 0;
-        boolean isEnd = false;
+        boolean isEndOfWord = false;
         TrieNode trieNode = root;
         for (int i = 0; i < str.length(); ++i) {
             char ch = str.charAt(i);
@@ -55,30 +55,29 @@ public class TrieNodeRepository {
                 break;
             }
             prefixMatchEndIdx = i;
-            isEnd = trieNode.isEndOfWord();
+            isEndOfWord = trieNode.isEndOfWord();
         }
-        if (isEnd) {
-            return PrefixSearchResponse.builder()
-                    .matched(MatchType.FULL)
-                    .prefix(str.substring(0, prefixMatchEndIdx + 1))
-                    .build();
+
+        if (isEndOfWord) {
+            return buildPrefixSearchResponse(MatchType.FULL, str.substring(0, prefixMatchEndIdx + 1));
         }
         if (partial && prefixMatchEndIdx > 0) {
-            return PrefixSearchResponse.builder()
-                    .matched(MatchType.PARTIAL)
-                    .prefix(str.substring(0, prefixMatchEndIdx + 1))
-                    .build();
+            return buildPrefixSearchResponse(MatchType.PARTIAL, str.substring(0, prefixMatchEndIdx + 1));
         }
-        return PrefixSearchResponse.builder()
-                .matched(MatchType.NONE)
-                .prefix(Constants.EMPTY_STRING)
-                .build();
+        return buildPrefixSearchResponse(MatchType.NONE, Constants.EMPTY_STRING);
     }
 
     private TrieNode getNewTrieNode() {
         return TrieNode.builder()
                 .children(new HashMap<>())
                 .isEndOfWord(false)
+                .build();
+    }
+
+    private PrefixSearchResponse buildPrefixSearchResponse(MatchType matchType, String prefix) {
+        return PrefixSearchResponse.builder()
+                .matched(matchType)
+                .prefix(prefix)
                 .build();
     }
 }

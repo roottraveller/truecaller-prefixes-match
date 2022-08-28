@@ -18,7 +18,12 @@ public class MatcherServiceImpl implements MatcherService {
         String[] split = payload.split(Constants.SEPARATOR_NEWLINE);
         long successCount = 0, failedCount = 0;
         for (String str : split) {
-            boolean status = matcherHandler.processPrefix(str.trim());
+            String trim = str.trim();
+            if (trim.length() == 0) {
+                ++failedCount;
+                continue;
+            }
+            boolean status = matcherHandler.processPrefix(trim);
             if (status) {
                 ++successCount;
             } else {
@@ -33,6 +38,6 @@ public class MatcherServiceImpl implements MatcherService {
 
     @Override
     public PrefixSearchResponse searchLongestPrefix(String str, boolean partial) {
-        return matcherHandler.searchLongestPrefix(str, partial);
+        return matcherHandler.searchLongestPrefix(str.trim(), partial);
     }
 }

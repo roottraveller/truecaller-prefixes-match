@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import java.util.Map;
 
 @UtilityClass
-public class Utils {
+public class ValidationUtils {
 
     public static void validate(String payload) {
         if (payload == null || payload.length() == 0) {
