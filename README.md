@@ -10,7 +10,7 @@
 - run project
     - goto PrefixesMatchApplication.java and run
 - run tests
-  - goto PrefixesMatchApplicationTests.java and run 
+    - goto PrefixesMatchApplicationTests.java and run
 
 ### Play with code
 
