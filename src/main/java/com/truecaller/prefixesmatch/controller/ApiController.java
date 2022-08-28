@@ -14,15 +14,16 @@ public class ApiController {
     @Autowired
     private MatcherService matcherService;
 
-    @PostMapping(name = "/preprocess", consumes = "text/plain")
-    public ResponseEntity<Boolean> ingestMatch(@RequestBody String payload) {
+    @PostMapping(value = "/preprocess", consumes = "text/plain")
+    public ResponseEntity<Boolean> ingestPrefixes(@RequestBody String payload) {
         Utils.validate(payload);
         return ResponseEntity.ok(matcherService.ingestPrefixes(payload));
     }
 
-    @GetMapping("/longestprefix/{str}")
-    public ResponseEntity<String> getUserInfo(@PathVariable("str") String str) {
-        Utils.validate(str);
-        return ResponseEntity.ok(matcherService.searchLongestPrefix(str));
+    @GetMapping("/longestprefix/{input}")
+    public ResponseEntity<String> searchLongestPrefix(@PathVariable("input") String input,
+                                                      @RequestParam(name = "partial") boolean partial) {
+        Utils.validate(input);
+        return ResponseEntity.ok(matcherService.searchLongestPrefix(input, partial));
     }
 }

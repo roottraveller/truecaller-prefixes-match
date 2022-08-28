@@ -33,7 +33,7 @@ public class MatcherServiceImpl implements MatcherService {
     }
 
     @Override
-    public String searchLongestPrefix(String str) {
-        return matcherHandler.searchLongestPrefix(str);
+    public String searchLongestPrefix(String str, boolean partial) {
+        return matcherHandler.searchLongestPrefix(str, partial);
     }
 }

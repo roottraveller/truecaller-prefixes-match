@@ -10,7 +10,7 @@ import java.util.Map;
 public class Utils {
 
     public static void validate(String payload) {
-        if (payload == null || payload.length() <= 0) {
+        if (payload == null || payload.length() == 0) {
             throw GenericException.builder()
                     .httpCode(HttpStatus.BAD_REQUEST.value())
                     .httpStatus(HttpStatus.BAD_REQUEST.getReasonPhrase())

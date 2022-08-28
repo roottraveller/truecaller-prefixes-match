@@ -7,5 +7,5 @@ public interface MatcherService {
 
     boolean ingestPrefixes(String payload);
 
-    String searchLongestPrefix(String str);
+    String searchLongestPrefix(String str, boolean partial);
 }
