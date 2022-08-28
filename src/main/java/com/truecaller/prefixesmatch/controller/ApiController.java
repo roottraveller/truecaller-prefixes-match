@@ -1,5 +1,7 @@
 package com.truecaller.prefixesmatch.controller;
 
+import com.truecaller.prefixesmatch.model.response.PrefixIngestResponse;
+import com.truecaller.prefixesmatch.model.response.PrefixSearchResponse;
 import com.truecaller.prefixesmatch.service.MatcherService;
 import com.truecaller.prefixesmatch.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
@@ -14,15 +16,15 @@ public class ApiController {
     @Autowired
     private MatcherService matcherService;
 
-    @PostMapping(value = "/preprocess", consumes = "text/plain")
-    public ResponseEntity<Boolean> ingestPrefixes(@RequestBody String payload) {
+    @PostMapping(value = "/index", consumes = "text/plain")
+    public ResponseEntity<PrefixIngestResponse> ingestPrefixes(@RequestBody String payload) {
         Utils.validate(payload);
         return ResponseEntity.ok(matcherService.ingestPrefixes(payload));
     }
 
-    @GetMapping("/longestprefix/{input}")
-    public ResponseEntity<String> searchLongestPrefix(@PathVariable("input") String input,
-                                                      @RequestParam(name = "partial") boolean partial) {
+    @GetMapping("/search/{input}")
+    public ResponseEntity<PrefixSearchResponse> searchLongestPrefix(@PathVariable("input") String input,
+                                                                    @RequestParam(name = "partial", defaultValue = "false") boolean partial) {
         Utils.validate(input);
         return ResponseEntity.ok(matcherService.searchLongestPrefix(input, partial));
     }

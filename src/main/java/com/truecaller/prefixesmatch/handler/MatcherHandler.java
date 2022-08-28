@@ -1,6 +1,7 @@
 package com.truecaller.prefixesmatch.handler;
 
 
+import com.truecaller.prefixesmatch.model.response.PrefixSearchResponse;
 import com.truecaller.prefixesmatch.repository.inmemory.TrieNodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,7 +15,7 @@ public class MatcherHandler {
         return trieNodeRepository.insert(prefix);
     }
 
-    public String searchLongestPrefix(String str, boolean partial) {
+    public PrefixSearchResponse searchLongestPrefix(String str, boolean partial) {
         return trieNodeRepository.searchLongestPrefix(str, partial);
     }
 }

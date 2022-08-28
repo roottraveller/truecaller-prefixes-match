@@ -13,5 +13,5 @@ import java.util.Map;
 @AllArgsConstructor
 public class TrieNode {
     private Map<Character, TrieNode> children;
-    private boolean isEnd;
+    private boolean isEndOfWord;
 }

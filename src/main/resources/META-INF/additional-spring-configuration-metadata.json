@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "springdoc.swagger-ui.disable-swagger-default-url",
+      "type": "java.lang.String",
+      "description": "Description for springdoc.swagger-ui.disable-swagger-default-url."
+    }
+  ]
+}

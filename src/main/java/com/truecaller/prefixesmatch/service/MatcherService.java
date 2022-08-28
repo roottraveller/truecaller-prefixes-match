@@ -1,11 +1,13 @@
 package com.truecaller.prefixesmatch.service;
 
+import com.truecaller.prefixesmatch.model.response.PrefixIngestResponse;
+import com.truecaller.prefixesmatch.model.response.PrefixSearchResponse;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface MatcherService {
 
-    boolean ingestPrefixes(String payload);
+    PrefixIngestResponse ingestPrefixes(String payload);
 
-    String searchLongestPrefix(String str, boolean partial);
+    PrefixSearchResponse searchLongestPrefix(String str, boolean partial);
 }

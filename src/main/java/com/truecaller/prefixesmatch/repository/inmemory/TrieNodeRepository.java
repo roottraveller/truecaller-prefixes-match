@@ -2,10 +2,13 @@ package com.truecaller.prefixesmatch.repository.inmemory;
 
 import com.truecaller.prefixesmatch.constants.Constants;
 import com.truecaller.prefixesmatch.exception.GenericException;
+import com.truecaller.prefixesmatch.model.MatchType;
 import com.truecaller.prefixesmatch.model.TrieNode;
+import com.truecaller.prefixesmatch.model.response.PrefixSearchResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Repository
@@ -14,34 +17,25 @@ public class TrieNodeRepository {
 
     public boolean insert(String str) {
         if (root == null) {
-            root = TrieNode.builder()
-                    .children(Map.of())
-                    .isEnd(false)
-                    .build();
+            root = getNewTrieNode();
         }
 
-        Map<Character, TrieNode> children = root.getChildren();
+        TrieNode trieNode = root;
         for (int i = 0; i < str.length(); ++i) {
             char ch = str.charAt(i);
-            // if matched, move to next children
-            if (children.get(ch) != null) {
-                children = children.get(ch).getChildren();
-            } else {
-                children.put(ch, TrieNode.builder()
-                        .children(Map.of())
-                        .isEnd(false)
-                        .build());
+            // if char does not match, insert a new node
+            // else move to next children
+            if (!trieNode.getChildren().containsKey(ch)) {
+                trieNode.getChildren().put(ch, getNewTrieNode());
             }
-
-            // set isEnd=true when end of str
-            if (i == str.length() - 1) {
-                children.get(ch).setEnd(true);
-            }
+            trieNode = trieNode.getChildren().get(ch);
         }
+        // set isEndOfWord=true
+        trieNode.setEndOfWord(true);
         return true;
     }
 
-    public String searchLongestPrefix(String str, boolean partial) {
+    public PrefixSearchResponse searchLongestPrefix(String str, boolean partial) {
         if (root == null) {
             throw GenericException.builder()
                     .httpCode(HttpStatus.PRECONDITION_FAILED.value())
@@ -52,21 +46,39 @@ public class TrieNodeRepository {
 
         int prefixMatchEndIdx = 0;
         boolean isEnd = false;
-        Map<Character, TrieNode> children = root.getChildren();
+        TrieNode trieNode = root;
         for (int i = 0; i < str.length(); ++i) {
             char ch = str.charAt(i);
-            // if matched, move to next children
-            if (children.get(ch) != null) {
-                prefixMatchEndIdx = i;
-                children = children.get(ch).getChildren();
-                isEnd = children.get(ch).isEnd();
-            } else {
+            // get next children
+            trieNode = trieNode.getChildren().get(ch);
+            if (trieNode == null) {
                 break;
             }
+            prefixMatchEndIdx = i;
+            isEnd = trieNode.isEndOfWord();
         }
-        if (isEnd || partial) {
-            return str.substring(prefixMatchEndIdx + 1);
+        if (isEnd) {
+            return PrefixSearchResponse.builder()
+                    .matched(MatchType.FULL)
+                    .prefix(str.substring(0, prefixMatchEndIdx + 1))
+                    .build();
         }
-        return Constants.EMPTY_STRING;
+        if (partial && prefixMatchEndIdx > 0) {
+            return PrefixSearchResponse.builder()
+                    .matched(MatchType.PARTIAL)
+                    .prefix(str.substring(0, prefixMatchEndIdx + 1))
+                    .build();
+        }
+        return PrefixSearchResponse.builder()
+                .matched(MatchType.NONE)
+                .prefix(Constants.EMPTY_STRING)
+                .build();
+    }
+
+    private TrieNode getNewTrieNode() {
+        return TrieNode.builder()
+                .children(new HashMap<>())
+                .isEndOfWord(false)
+                .build();
     }
 }

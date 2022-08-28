@@ -1,14 +1,12 @@
 package com.truecaller.prefixesmatch.service.impl;
 
 import com.truecaller.prefixesmatch.constants.Constants;
-import com.truecaller.prefixesmatch.exception.GenericException;
 import com.truecaller.prefixesmatch.handler.MatcherHandler;
+import com.truecaller.prefixesmatch.model.response.PrefixIngestResponse;
+import com.truecaller.prefixesmatch.model.response.PrefixSearchResponse;
 import com.truecaller.prefixesmatch.service.MatcherService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Service
 public class MatcherServiceImpl implements MatcherService {
@@ -16,24 +14,25 @@ public class MatcherServiceImpl implements MatcherService {
     private MatcherHandler matcherHandler;
 
     @Override
-    public boolean ingestPrefixes(String payload) {
+    public PrefixIngestResponse ingestPrefixes(String payload) {
         String[] split = payload.split(Constants.SEPARATOR_NEWLINE);
-        boolean status = false;
+        long successCount = 0, failedCount = 0;
         for (String str : split) {
-            status = matcherHandler.processPrefix(str.trim());
-            if (!status) {
-                throw GenericException.builder()
-                        .httpCode(HttpStatus.BAD_REQUEST.value())
-                        .httpStatus(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                        .context(Map.of("reason", String.format("failed when processing prefix%s", str)))
-                        .build();
+            boolean status = matcherHandler.processPrefix(str.trim());
+            if (status) {
+                ++successCount;
+            } else {
+                ++failedCount;
             }
         }
-        return status;
+        return PrefixIngestResponse.builder()
+                .success(successCount)
+                .failed(failedCount)
+                .build();
     }
 
     @Override
-    public String searchLongestPrefix(String str, boolean partial) {
+    public PrefixSearchResponse searchLongestPrefix(String str, boolean partial) {
         return matcherHandler.searchLongestPrefix(str, partial);
     }
 }
