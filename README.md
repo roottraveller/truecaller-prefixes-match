@@ -15,7 +15,24 @@
 - step 1: ingest prefixes
   ```base
   $ curl -X POST "http://localhost:8080/api/truecaller/index" -H "accept: */*" -H "Content-Type: text/plain" 
-  -d "2y3fKTS4VdwEEXC8AWMa4vvOfxyiuoXZVKAWeqIXfhdW8dLfGZU0TLgXK8iwlnoDyiYa2y3fKTaKAWeqDKAWeq7Rhp1IlDXfhddKAWeq9XYfxPGWUvc5oJNxJ7fbA"
+  -d '2y3fKTS
+    4VdwEEXC8
+    AWMa4vvOf
+    xyiuoXZV
+    KAWeqI
+    XfhdW
+    8dLfGZU0T
+    LgXK8iwln
+    oDyiYa
+    2y3fKTa
+    KAWeqD
+    KAWeq7
+    Rhp1IlD
+    Xfhdd
+    KAWeq9
+    XYfxPGW
+    Uvc5oJ
+    NxJ7fbA'
   ```
     - response
   ```base
